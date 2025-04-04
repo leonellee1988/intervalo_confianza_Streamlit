@@ -3,7 +3,7 @@ from scipy.stats import norm, t
 
 # Inicializar valores predeterminados en session_state
 if "sample_mean_or_proportion" not in st.session_state:
-    st.session_state["sample_mean_or_proportion"] = None
+    st.session_state["sample_mean_or_proportion"] = None  # Valor inicial como None
 if "significance_level" not in st.session_state:
     st.session_state["significance_level"] = ""
 if "standard_deviation" not in st.session_state:
@@ -22,13 +22,21 @@ with st.sidebar:
     )
 
 # Inputs principales
-sample_mean_or_proportion = st.number_input(
-    "Enter the sample mean or proportion (for proportions, values must be between 0 and 1):",
-    min_value=0.0,  # Asegurarse que las proporciones no sean negativas
-    max_value=1.0 if calculation_type == "Proportion" else None,  # Restringir entre 0 y 1 para proporciones
-    value=st.session_state["sample_mean_or_proportion"],
-    key="sample_mean_or_proportion"
-)
+# Ajustar restricciones según el tipo de cálculo
+if calculation_type == "Proportion":
+    sample_mean_or_proportion = st.number_input(
+        "Enter the sample proportion (values must be between 0 and 1):",
+        min_value=0.0,
+        max_value=1.0,  # Restricción de proporciones
+        value=st.session_state["sample_mean_or_proportion"],
+        key="sample_mean_or_proportion"
+    )
+elif calculation_type == "Mean":
+    sample_mean_or_proportion = st.number_input(
+        "Enter the sample mean:",
+        value=st.session_state["sample_mean_or_proportion"],
+        key="sample_mean_or_proportion"
+    )
 
 significance_level = st.selectbox(
     "Select the significance level (α):",
@@ -52,7 +60,7 @@ if calculation_type == "Proportion":
 
 sample_size = st.number_input(
     sample_size_label,
-    min_value=1,  # No hay restricción mínima para el cálculo, pero no puede ser menor a 1
+    min_value=1,  # No hay restricción mínima basada en cálculo
     value=st.session_state["sample_size"],
     key="sample_size"
 )
