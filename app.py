@@ -30,7 +30,6 @@ with st.sidebar:
     )
 
 # Inputs principales
-# Ajustar restricciones dinámicas basadas en el tipo de cálculo
 if calculation_type == "Proportion":
     sample_mean_or_proportion = st.number_input(
         "Enter the sample proportion (values must be between 0 and 1):",
@@ -61,7 +60,6 @@ if calculation_type == "Mean":
         key="standard_deviation"
     )
 
-# Etiqueta condicional para el tamaño de muestra
 sample_size_label = "Enter the sample size"
 if calculation_type == "Proportion":
     sample_size_label += " (recommended: ≥ 30 for better approximation)"
@@ -108,9 +106,6 @@ with col1:
             upper_bound = sample_mean_or_proportion + margin_of_error
 
             st.success(f"The confidence interval is: [{lower_bound:.4f}, {upper_bound:.4f}]")
-
-            # Limpiar campos y recargar
-            reset_session_state()
 
 with col2:
     if st.button("Reset"):
