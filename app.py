@@ -12,7 +12,7 @@ def initialize_session_state():
     if "standard_deviation_reset" not in st.session_state:
         st.session_state["standard_deviation_reset"] = 0.0
     if "sample_size_reset" not in st.session_state:
-        st.session_state["sample_size_reset"] = 0.0
+        st.session_state["sample_size_reset"] = 1
 
 # Llamar la función para inicializar los valores
 initialize_session_state()
@@ -95,4 +95,4 @@ if st.button("Clear"):
     st.session_state["sample_mean_or_proportion_reset"] = 0.0
     st.session_state["significance_level_reset"] = ""
     st.session_state["standard_deviation_reset"] = 0.0
-    st.session_state["sample_size_reset"] = 0.0
+    st.session_state["sample_size_reset"] = 1
