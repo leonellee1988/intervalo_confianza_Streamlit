@@ -3,11 +3,11 @@ from scipy.stats import norm, t
 
 # Inicializar valores predeterminados en session_state
 if "sample_mean_or_proportion" not in st.session_state:
-    st.session_state["sample_mean_or_proportion"] = 0.0
+    st.session_state["sample_mean_or_proportion"] = 0
 if "significance_level" not in st.session_state:
     st.session_state["significance_level"] = ""
 if "standard_deviation" not in st.session_state:
-    st.session_state["standard_deviation"] = 0.0
+    st.session_state["standard_deviation"] = 0
 if "sample_size" not in st.session_state:
     st.session_state["sample_size"] = 1
 
@@ -15,10 +15,11 @@ if "sample_size" not in st.session_state:
 st.title("Confidence Interval (CI) Calculator")
 
 # Sidebar para seleccionar el tipo de cálculo
-calculation_type = st.selectbox(
-    "What would you like to calculate?",
-    ["", "Mean", "Proportion"]
-)
+with st.sidebar:
+    calculation_type = st.selectbox(
+        "What would you like to calculate?",
+        ["", "Mean", "Proportion"]
+    )
 
 # Inputs principales
 sample_mean_or_proportion = st.number_input(
