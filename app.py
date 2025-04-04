@@ -6,13 +6,13 @@ def initialize_session_state():
     if "calculation_type_reset" not in st.session_state:
         st.session_state["calculation_type_reset"] = ""
     if "sample_mean_or_proportion_reset" not in st.session_state:
-        st.session_state["sample_mean_or_proportion_reset"] = ""
+        st.session_state["sample_mean_or_proportion_reset"] = 0.0
     if "significance_level_reset" not in st.session_state:
         st.session_state["significance_level_reset"] = ""
     if "standard_deviation_reset" not in st.session_state:
-        st.session_state["standard_deviation_reset"] = ""
+        st.session_state["standard_deviation_reset"] = 0.0
     if "sample_size_reset" not in st.session_state:
-        st.session_state["sample_size_reset"] = ""
+        st.session_state["sample_size_reset"] = 0.0
 
 # Llamar la función para inicializar los valores
 initialize_session_state()
@@ -92,7 +92,7 @@ if st.button("Calculate"):
 if st.button("Clear"):
     # Resetear los valores sin modificar widgets ya instanciados
     st.session_state["calculation_type_reset"] = ""
-    st.session_state["sample_mean_or_proportion_reset"] = ""
+    st.session_state["sample_mean_or_proportion_reset"] = 0.0
     st.session_state["significance_level_reset"] = ""
-    st.session_state["standard_deviation_reset"] = ""
-    st.session_state["sample_size_reset"] = ""
+    st.session_state["standard_deviation_reset"] = 0.0
+    st.session_state["sample_size_reset"] = 0.0
