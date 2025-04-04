@@ -1,7 +1,7 @@
 import streamlit as st
 from scipy.stats import norm, t
 
-# Inicializar valores predeterminados
+# Función para inicializar los valores predeterminados
 def initialize_session_state():
     if "calculation_type" not in st.session_state:
         st.session_state["calculation_type"] = ""
@@ -13,36 +13,35 @@ def initialize_session_state():
         st.session_state["standard_deviation"] = 0.0
     if "sample_size" not in st.session_state:
         st.session_state["sample_size"] = 1
-    if "reset" not in st.session_state:
-        st.session_state["reset"] = False  # Bandera para controlar el reset
+    if "clear_inputs_triggered" not in st.session_state:
+        st.session_state["clear_inputs_triggered"] = False  # Para el botón de reinicio
 
-# Llamar la función para inicializar los valores
+# Inicializar los valores predeterminados
 initialize_session_state()
 
 # Función para limpiar los inputs
 def clear_inputs():
-    st.session_state["reset"] = True  # Activar la bandera de reset
+    st.session_state["calculation_type"] = ""
+    st.session_state["sample_mean_or_proportion"] = 0.0
+    st.session_state["significance_level"] = ""
+    st.session_state["standard_deviation"] = 0.0
+    st.session_state["sample_size"] = 1
+    st.session_state["clear_inputs_triggered"] = True  # Bandera de limpieza
 
 # Título de la aplicación
 st.title("Confidence Interval (CI) Calculator")
 
 # Sidebar para seleccionar el tipo de cálculo
 with st.sidebar:
-    if st.session_state["reset"]:  # Si el reset está activado, se reinician los valores
-        st.session_state["calculation_type"] = ""
     calculation_type = st.selectbox(
         "What would you like to calculate?",
         ["", "Mean", "Proportion"],  # Default blank value
         key="calculation_type"
     )
 
-# Inputs principales:
-if st.session_state["reset"]:  # Si el reset está activado, se reinician los valores
-    st.session_state["sample_mean_or_proportion"] = 0.0
-    st.session_state["significance_level"] = ""
-    st.session_state["standard_deviation"] = 0.0
-    st.session_state["sample_size"] = 1
-    st.session_state["reset"] = False  # Desactivar el reset después de limpiar
+# Inputs principales
+if st.session_state["clear_inputs_triggered"]:  # Si se activa la limpieza
+    st.session_state["clear_inputs_triggered"] = False  # Desactivar la bandera después de limpiar
 
 sample_mean_or_proportion = st.number_input(
     "Enter the sample mean or proportion:",
@@ -66,10 +65,14 @@ if st.session_state["calculation_type"] == "Mean":
         key="standard_deviation"
     )
 
-# Validación dinámica del tamaño mínimo de la muestra
+# Etiqueta condicional para el tamaño de muestra
+sample_size_label = "Enter the sample size"
+if st.session_state["calculation_type"] == "Proportion":
+    sample_size_label += " (must be ≥ 30 for proportions)"
+
 min_sample_size = 30 if st.session_state["calculation_type"] == "Proportion" else 1
 sample_size = st.number_input(
-    "Enter the sample size (must be ≥ 30 for proportions):",
+    sample_size_label,
     format="%d",
     min_value=min_sample_size,  # Restricción basada en el tipo de cálculo
     value=st.session_state["sample_size"],
