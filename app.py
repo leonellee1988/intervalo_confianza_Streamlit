@@ -1,21 +1,20 @@
 import streamlit as st
 from scipy.stats import norm, t
 
-# Bandeja para controlar el reset
-if "do_reset" not in st.session_state:
-    st.session_state["do_reset"] = False
+# Bandera para controlar el reset sin destruir la app
+if "reset_triggered" not in st.session_state:
+    st.session_state["reset_triggered"] = False
 
-# Botón RESET: activa la bandera de reinicio y detiene la ejecución
-if st.button("Reset"):
-    st.session_state["do_reset"] = True
-    st.stop()
+# Reset manual de variables específicas
+if st.session_state["reset_triggered"]:
+    st.session_state["calculation_type"] = ""
+    st.session_state["sample_mean_or_proportion"] = 0.0
+    st.session_state["significance_level"] = ""
+    st.session_state["standard_deviation"] = 0.0
+    st.session_state["sample_size"] = 1
+    st.session_state["reset_triggered"] = False  # importante: desactivar bandera
 
-# Si el reset fue solicitado, limpiamos todo y salimos
-if st.session_state["do_reset"]:
-    st.session_state.clear()  # limpia todas las claves
-    st.experimental_rerun()  # <-- si tienes versión compatible, si no omite esta línea
-
-# Título principal
+# Título de la app
 st.title("Confidence Interval (CI) Calculator")
 
 # Sidebar para seleccionar el tipo de cálculo
@@ -25,7 +24,7 @@ calculation_type = st.sidebar.selectbox(
     key="calculation_type"
 )
 
-# Inputs principales según el tipo de estadístico
+# Inputs principales según el tipo
 if calculation_type == "Proportion":
     sample_mean_or_proportion = st.number_input(
         "Enter the sample proportion (0 to 1):",
@@ -45,7 +44,6 @@ significance_level = st.selectbox(
     key="significance_level"
 )
 
-standard_deviation = None
 if calculation_type == "Mean":
     standard_deviation = st.number_input(
         "Enter the standard deviation:",
@@ -63,12 +61,24 @@ sample_size = st.number_input(
     key="sample_size"
 )
 
-# Botón para calcular
-if st.button("Calculate"):
-    # Validación
-    if not calculation_type or significance_level == "" or sample_size is None or \
-       (calculation_type == "Mean" and standard_deviation is None) or \
-       sample_mean_or_proportion is None:
+# Botones en una misma fila
+col1, col2 = st.columns([1, 1])
+with col1:
+    calculate_button = st.button("Calculate")
+with col2:
+    reset_button = st.button("Reset")
+
+# Acciones del botón Reset
+if reset_button:
+    st.session_state["reset_triggered"] = True
+    st.experimental_rerun()
+
+# Acción del botón Calculate
+if calculate_button:
+    if not calculation_type or significance_level == "" or \
+       sample_mean_or_proportion is None or \
+       (calculation_type == "Mean" and st.session_state["standard_deviation"] == 0.0) or \
+       sample_size is None:
         st.error("Please complete all required information.")
     else:
         st.subheader("Input Summary:")
@@ -76,17 +86,17 @@ if st.button("Calculate"):
         st.write(f"- **Significance Level (α):** {significance_level}")
         st.write(f"- **Sample Mean/Proportion:** {sample_mean_or_proportion}")
         if calculation_type == "Mean":
-            st.write(f"- **Standard Deviation:** {standard_deviation}")
+            st.write(f"- **Standard Deviation:** {st.session_state['standard_deviation']}")
         st.write(f"- **Sample Size:** {sample_size}")
 
         # Cálculo del intervalo
         if calculation_type == "Mean":
             if sample_size >= 30:
                 z = norm.ppf(1 - significance_level / 2)
-                moe = z * (standard_deviation / (sample_size ** 0.5))
+                moe = z * (st.session_state["standard_deviation"] / (sample_size ** 0.5))
             else:
                 t_val = t.ppf(1 - significance_level / 2, df=sample_size - 1)
-                moe = t_val * (standard_deviation / (sample_size ** 0.5))
+                moe = t_val * (st.session_state["standard_deviation"] / (sample_size ** 0.5))
         else:
             z = norm.ppf(1 - significance_level / 2)
             moe = z * ((sample_mean_or_proportion * (1 - sample_mean_or_proportion)) / sample_size) ** 0.5
