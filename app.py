@@ -17,6 +17,7 @@ def reset_session_state():
     st.session_state["significance_level"] = ""
     st.session_state["standard_deviation"] = None
     st.session_state["sample_size"] = 1
+    st.experimental_rerun()
 
 # Título de la aplicación
 st.title("Confidence Interval (CI) Calculator")
@@ -55,7 +56,7 @@ standard_deviation = None
 if calculation_type == "Mean":
     standard_deviation = st.number_input(
         "Enter the standard deviation:",
-        min_value=0.0,  # No puede ser negativa
+        min_value=0.0,
         value=st.session_state["standard_deviation"],
         key="standard_deviation"
     )
@@ -67,49 +68,50 @@ if calculation_type == "Proportion":
 
 sample_size = st.number_input(
     sample_size_label,
-    min_value=1,  # Tamaño mínimo 1
+    min_value=1,
     value=st.session_state["sample_size"],
     key="sample_size"
 )
 
-# Botón para calcular
-if st.button("Calculate"):
-    # Validar que todos los campos requeridos estén completos
-    if not calculation_type or sample_mean_or_proportion is None or not significance_level or \
-       (calculation_type == "Mean" and standard_deviation is None) or not sample_size:
-        st.error("Please complete all required information.")
-    else:
-        # Resumen de los datos ingresados
-        st.subheader("Input Summary:")
-        st.write(f"- **Statistic Type:** {calculation_type}")
-        st.write(f"- **Significance Level (α):** {significance_level}")
-        st.write(f"- **Sample Mean/Proportion:** {sample_mean_or_proportion}")
-        if calculation_type == "Mean":
-            st.write(f"- **Standard Deviation:** {standard_deviation}")
-        st.write(f"- **Sample Size:** {sample_size}")
+# Botones de acción
+col1, col2 = st.columns(2)
 
-        # Cálculo del intervalo de confianza
-        if calculation_type == "Mean":
-            if sample_size >= 30:  # Uso de Z para muestras grandes
+with col1:
+    if st.button("Calculate"):
+        if not calculation_type or sample_mean_or_proportion is None or not significance_level or \
+           (calculation_type == "Mean" and standard_deviation is None) or not sample_size:
+            st.error("Please complete all required information.")
+        else:
+            st.subheader("Input Summary:")
+            st.write(f"- **Statistic Type:** {calculation_type}")
+            st.write(f"- **Significance Level (α):** {significance_level}")
+            st.write(f"- **Sample Mean/Proportion:** {sample_mean_or_proportion}")
+            if calculation_type == "Mean":
+                st.write(f"- **Standard Deviation:** {standard_deviation}")
+            st.write(f"- **Sample Size:** {sample_size}")
+
+            # Cálculo del intervalo de confianza
+            if calculation_type == "Mean":
+                if sample_size >= 30:
+                    z_value = norm.ppf(1 - significance_level / 2)
+                    margin_of_error = z_value * (standard_deviation / (sample_size ** 0.5))
+                else:
+                    t_value = t.ppf(1 - significance_level / 2, df=sample_size - 1)
+                    margin_of_error = t_value * (standard_deviation / (sample_size ** 0.5))
+            elif calculation_type == "Proportion":
                 z_value = norm.ppf(1 - significance_level / 2)
-                margin_of_error = z_value * (standard_deviation / (sample_size ** 0.5))
-            else:  # Uso de T para muestras pequeñas
-                t_value = t.ppf(1 - significance_level / 2, df=sample_size - 1)
-                margin_of_error = t_value * (standard_deviation / (sample_size ** 0.5))
-        elif calculation_type == "Proportion":
-            z_value = norm.ppf(1 - significance_level / 2)
-            margin_of_error = z_value * ((sample_mean_or_proportion * (1 - sample_mean_or_proportion)) / sample_size) ** 0.5
+                margin_of_error = z_value * ((sample_mean_or_proportion * (1 - sample_mean_or_proportion)) / sample_size) ** 0.5
+                if sample_size < 30:
+                    st.warning("For proportions, it is recommended to have a sample size of at least 30 for better approximation.")
 
-            # Advertencia para muestras pequeñas
-            if sample_size < 30:
-                st.warning("For proportions, it is recommended to have a sample size of at least 30 for better approximation.")
+            lower_bound = sample_mean_or_proportion - margin_of_error
+            upper_bound = sample_mean_or_proportion + margin_of_error
 
-        # Resultados del intervalo de confianza
-        lower_bound = sample_mean_or_proportion - margin_of_error
-        upper_bound = sample_mean_or_proportion + margin_of_error
+            st.success(f"The confidence interval is: [{lower_bound:.4f}, {upper_bound:.4f}]")
 
-        st.success(f"The confidence interval is: [{lower_bound:.4f}, {upper_bound:.4f}]")
+            # Limpiar campos y recargar
+            reset_session_state()
 
-        # Reiniciar valores de session_state
-        # Inicializar valores predeterminados en session_state
+with col2:
+    if st.button("Reset"):
         reset_session_state()
