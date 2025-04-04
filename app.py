@@ -44,12 +44,11 @@ if calculation_type == "Mean":
 # Etiqueta condicional para el tamaño de muestra
 sample_size_label = "Enter the sample size"
 if calculation_type == "Proportion":
-    sample_size_label += " (must be ≥ 30 for proportions)"
+    sample_size_label += " (recommended: ≥ 30 for better approximation)"
 
-min_sample_size = 30 if calculation_type == "Proportion" else 1
 sample_size = st.number_input(
     sample_size_label,
-    min_value=min_sample_size,  # Restricción basada en el tipo de cálculo
+    min_value=1,  # No hay restricción mínima basada en cálculo
     value=st.session_state["sample_size"],
     key="sample_size"
 )
@@ -71,6 +70,10 @@ if st.button("Calculate"):
         elif calculation_type == "Proportion":
             z_value = norm.ppf(1 - significance_level / 2)
             margin_of_error = z_value * ((sample_mean_or_proportion * (1 - sample_mean_or_proportion)) / sample_size) ** 0.5
+
+            # Advertencia para muestras pequeñas
+            if sample_size < 30:
+                st.warning("For proportions, it is recommended to have a sample size of at least 30 for better approximation.")
 
         # Resultados
         lower_bound = sample_mean_or_proportion - margin_of_error
