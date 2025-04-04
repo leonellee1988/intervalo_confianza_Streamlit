@@ -3,11 +3,11 @@ from scipy.stats import norm, t
 
 # Inicializar valores predeterminados en session_state
 if "sample_mean_or_proportion" not in st.session_state:
-    st.session_state["sample_mean_or_proportion"] = 0
+    st.session_state["sample_mean_or_proportion"] = None
 if "significance_level" not in st.session_state:
     st.session_state["significance_level"] = ""
 if "standard_deviation" not in st.session_state:
-    st.session_state["standard_deviation"] = 0
+    st.session_state["standard_deviation"] = None
 if "sample_size" not in st.session_state:
     st.session_state["sample_size"] = 1
 
@@ -23,7 +23,9 @@ with st.sidebar:
 
 # Inputs principales
 sample_mean_or_proportion = st.number_input(
-    "Enter the sample mean or proportion:",
+    "Enter the sample mean or proportion (for proportions, values must be between 0 and 1):",
+    min_value=0.0,  # Asegurarse que las proporciones no sean negativas
+    max_value=1.0 if calculation_type == "Proportion" else None,  # Restringir entre 0 y 1 para proporciones
     value=st.session_state["sample_mean_or_proportion"],
     key="sample_mean_or_proportion"
 )
@@ -38,6 +40,7 @@ standard_deviation = None
 if calculation_type == "Mean":
     standard_deviation = st.number_input(
         "Enter the standard deviation:",
+        min_value=0.0,  # La desviación estándar no puede ser negativa
         value=st.session_state["standard_deviation"],
         key="standard_deviation"
     )
@@ -49,15 +52,15 @@ if calculation_type == "Proportion":
 
 sample_size = st.number_input(
     sample_size_label,
-    min_value=1,  # No hay restricción mínima basada en cálculo
+    min_value=1,  # No hay restricción mínima para el cálculo, pero no puede ser menor a 1
     value=st.session_state["sample_size"],
     key="sample_size"
 )
 
 # Botón para calcular
 if st.button("Calculate"):
-    if not calculation_type or not sample_mean_or_proportion or not significance_level or \
-       (calculation_type == "Mean" and not standard_deviation) or not sample_size:
+    if not calculation_type or sample_mean_or_proportion is None or not significance_level or \
+       (calculation_type == "Mean" and standard_deviation is None) or not sample_size:
         st.error("Please complete all required information.")
     else:
         # Cálculo del intervalo de confianza
