@@ -1,28 +1,26 @@
-# Cargar librerias (considerar en el archivo requirements.txt):
 import streamlit as st
 from scipy.stats import norm, t
 
-# Titulo de la aplicación:
+# App Title
 st.title("Confidence Interval (CI) Calculator")
 
-# Segmentadores (barra lateral)
+# Sidebar for Segmenters
 with st.sidebar:
-    # Segmentador 1: tipo de calculo (media o proporción):
+    # Segmentador 1: tipo de cálculo (media o proporción):
     calculation_type = st.selectbox(
         "What would you like to calculate?",
-        ["", "Mean", "Proportion"]
+        ["", "Mean", "Proportion"]  # Default blank value
     )
 
-    # Segmentador 2: tamaño de la muestra:
+    # Segmentador 2: tamaño de la muestra (aplica para medias):
     sample_size_type = None
     if calculation_type == "Mean":
         sample_size_type = st.selectbox(
             "What is your sample size?",
-            ["", "Large (≥ 30)", "Small (< 30)"]
+            ["", "Large (≥ 30)", "Small (< 30)"]  # Default blank value
         )
 
-# Sección principal de la App:
-
+# Main Section for Inputs:
 # Input: ingreso de la media o proporción:
 sample_mean_or_proportion = st.number_input(
     "Enter the sample mean or proportion:",
@@ -33,7 +31,7 @@ sample_mean_or_proportion = st.number_input(
 # Input: ingreso del nivel de significancia:
 significance_level = st.selectbox(
     "Select the significance level (α):",
-    ["", 0.10, 0.05, 0.01]
+    ["", 0.10, 0.05, 0.01]  # Default blank value
 )
 
 # Input: ingreso de la desviación estándar (aplica para medias):
@@ -46,24 +44,21 @@ if calculation_type == "Mean":
     )
 
 # Input: ingreso tamaño de la muestra:
+min_sample_size = 30 if calculation_type == "Proportion" or sample_size_type == "Large (≥ 30)" else 1
 sample_size = st.number_input(
     "Enter the sample size:",
     format="%d",
-    min_value=1
+    min_value=min_sample_size  # Restricción basada en la selección
 )
 
-# Validación del tamaño de la muestra:
-if sample_size_type == "Large (≥ 30)" and sample_size < 30:
-    st.error("Sample size must be at least 30 for large samples.")
-
-# Botón de calculo:
+# Button to Calculate
 if st.button("Calculate"):
     if not calculation_type or not sample_mean_or_proportion or not significance_level or \
        (calculation_type == "Mean" and not standard_deviation) or not sample_size or \
        (calculation_type == "Mean" and not sample_size_type):
         st.error("Please complete all required information.")
     else:
-        # Calculo del intervalo de confianza:
+        # Confidence Interval Calculation:
         if calculation_type == "Mean":
             if sample_size_type == "Large (≥ 30)":
                 z_value = norm.ppf(1 - significance_level / 2)
@@ -75,8 +70,12 @@ if st.button("Calculate"):
             z_value = norm.ppf(1 - significance_level / 2)
             margin_of_error = z_value * ((sample_mean_or_proportion * (1 - sample_mean_or_proportion)) / sample_size) ** 0.5
 
-        # Resultado
+        # Resultado:
         lower_bound = sample_mean_or_proportion - margin_of_error
         upper_bound = sample_mean_or_proportion + margin_of_error
 
         st.success(f"The confidence interval is: [{lower_bound:.4f}, {upper_bound:.4f}]")
+
+# Button to Clear Inputs
+if st.button("Clear"):
+    st.experimental_rerun()
