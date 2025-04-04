@@ -1,7 +1,7 @@
 import streamlit as st
 from scipy.stats import norm, t
 
-# Función para inicializar los valores predeterminados en session_state
+# Inicializar valores predeterminados
 def initialize_session_state():
     if "calculation_type" not in st.session_state:
         st.session_state["calculation_type"] = ""
@@ -13,23 +13,23 @@ def initialize_session_state():
         st.session_state["standard_deviation"] = 0.0
     if "sample_size" not in st.session_state:
         st.session_state["sample_size"] = 1
+    if "reset" not in st.session_state:
+        st.session_state["reset"] = False  # Bandera para controlar el reset
 
-# Llamar la función para inicializar los valores en session_state
+# Llamar la función para inicializar los valores
 initialize_session_state()
 
 # Función para limpiar los inputs
 def clear_inputs():
-    st.session_state["calculation_type"] = ""
-    st.session_state["sample_mean_or_proportion"] = 0.0
-    st.session_state["significance_level"] = ""
-    st.session_state["standard_deviation"] = 0.0
-    st.session_state["sample_size"] = 1
+    st.session_state["reset"] = True  # Activar la bandera de reset
 
 # Título de la aplicación
 st.title("Confidence Interval (CI) Calculator")
 
 # Sidebar para seleccionar el tipo de cálculo
 with st.sidebar:
+    if st.session_state["reset"]:  # Si el reset está activado, se reinician los valores
+        st.session_state["calculation_type"] = ""
     calculation_type = st.selectbox(
         "What would you like to calculate?",
         ["", "Mean", "Proportion"],  # Default blank value
@@ -37,6 +37,13 @@ with st.sidebar:
     )
 
 # Inputs principales:
+if st.session_state["reset"]:  # Si el reset está activado, se reinician los valores
+    st.session_state["sample_mean_or_proportion"] = 0.0
+    st.session_state["significance_level"] = ""
+    st.session_state["standard_deviation"] = 0.0
+    st.session_state["sample_size"] = 1
+    st.session_state["reset"] = False  # Desactivar el reset después de limpiar
+
 sample_mean_or_proportion = st.number_input(
     "Enter the sample mean or proportion:",
     format="%.4f",
