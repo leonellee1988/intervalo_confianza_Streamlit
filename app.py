@@ -1,22 +1,9 @@
 import streamlit as st
 from scipy.stats import norm, t
 
-# Inicializar valores predeterminados en session_state
-for key, default in {
-    "sample_mean_or_proportion": 0.0,
-    "significance_level": "",
-    "standard_deviation": 0.0,
-    "sample_size": 1
-}.items():
-    if key not in st.session_state:
-        st.session_state[key] = default
-
-# Función para resetear session_state
+# Función para resetear session_state de forma segura
 def reset_session_state():
-    st.session_state.sample_mean_or_proportion = 0.0
-    st.session_state.significance_level = ""
-    st.session_state.standard_deviation = 0.0
-    st.session_state.sample_size = 1
+    st.session_state.clear()
     st.experimental_rerun()
 
 # Título de la aplicación
@@ -71,14 +58,14 @@ col1, col2 = st.columns(2)
 
 with col1:
     if st.button("Calculate"):
-        # Extraer valores desde session_state de forma segura
-        p_or_mean = st.session_state.sample_mean_or_proportion
-        alpha = st.session_state.significance_level
-        std_dev = st.session_state.standard_deviation
-        n = st.session_state.sample_size
+        # Extraer valores desde session_state
+        p_or_mean = st.session_state.get("sample_mean_or_proportion", None)
+        alpha = st.session_state.get("significance_level", "")
+        std_dev = st.session_state.get("standard_deviation", None)
+        n = st.session_state.get("sample_size", None)
 
         if not calculation_type or alpha == "" or n is None or \
-           (calculation_type == "Mean" and std_dev == 0.0) or \
+           (calculation_type == "Mean" and std_dev is None) or \
            (calculation_type == "Proportion" and (p_or_mean < 0 or p_or_mean > 1)):
             st.error("Please complete all required information.")
         else:
