@@ -112,8 +112,4 @@ if st.button("Calculate"):
 
         # Reiniciar valores de session_state
         # Inicializar valores predeterminados en session_state
-        if "sample_mean_or_proportion" == 'Mean' or "sample_mean_or_proportion" == 'Proportion':
-            st.session_state["sample_mean_or_proportion"] = None
-            st.session_state["significance_level"] = ""
-            st.session_state["standard_deviation"] = None
-            st.session_state["sample_size"] = 1
+        reset_session_state()
