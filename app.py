@@ -17,8 +17,7 @@ def reset_fields():
 
 # Imagen centrada con st.columns
 left, middle, right = st.columns(3, border=True)
-with middle:
-    st.image("calculadora.png", width=100)
+middle.st.image("calculadora.png", width=100)
 
 # Título
 st.title("Confidence Interval (CI) Calculator")
