@@ -15,11 +15,10 @@ def reset_fields():
     for key in DEFAULTS.keys():
         st.session_state.pop(key, None)  # Borra la clave si existe
 
-# Imagen
-st.markdown(
-    "<div style='text-align: center;'><img src='calculadora.png' width='100'></div>",
-    unsafe_allow_html=True
-)
+# Imagen centrada con st.columns
+col_img1, col_img2, col_img3 = st.columns([1, 2, 1])
+with col_img2:
+    st.image("calculadora.png", width=100)
 
 # Título
 st.title("Confidence Interval (CI) Calculator")
