@@ -17,7 +17,7 @@ def reset_fields():
             del st.session_state[key]
 
 # Imagen
-st.image('calculadora.png', width=150)
+st.image('calculadora.png')
 
 # Título
 st.title("Confidence Interval (CI) Calculator")
