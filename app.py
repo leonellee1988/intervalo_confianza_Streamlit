@@ -12,12 +12,14 @@ DEFAULTS = {
 
 # Función para resetear variables
 def reset_fields():
-    for key, value in DEFAULTS.items():
-        if key in st.session_state:
-            del st.session_state[key]
+    for key in DEFAULTS.keys():
+        st.session_state.pop(key, None)  # Borra la clave si existe
 
 # Imagen
-st.image('calculadora.png', width=100)
+st.markdown(
+    "<div style='text-align: center;'><img src='calculadora.png' width='100'></div>",
+    unsafe_allow_html=True
+)
 
 # Título
 st.title("Confidence Interval (CI) Calculator")
