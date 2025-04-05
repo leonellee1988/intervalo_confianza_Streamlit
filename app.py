@@ -13,7 +13,7 @@ DEFAULTS = {
 # Función para resetear variables
 def reset_fields():
     for key in DEFAULTS.keys():
-        st.session_state.pop(key, None)  # Borra la clave si existe
+        st.session_state.pop(key, None)
 
 # Imagen centrada con st.columns
 left, middle, right = st.columns(3, vertical_alignment="bottom")
@@ -74,7 +74,7 @@ sample_size = st.number_input(
     key="sample_size"
 )
 
-# Botones en una fila
+# Botones "Calculate" y "Clear"
 col1, col2 = st.columns(2)
 
 with col1:
@@ -92,7 +92,6 @@ with col1:
             if calculation_type == "Mean":
                 st.write(f"- **Standard Deviation:** {st.session_state.standard_deviation}")
             st.write(f"- **Sample Size:** {sample_size}")
-
             # Calcular IC
             if calculation_type == "Mean":
                 if sample_size >= 30:
@@ -106,7 +105,6 @@ with col1:
                 moe = z * ((sample_mean_or_proportion * (1 - sample_mean_or_proportion)) / sample_size) ** 0.5
                 if sample_size < 30:
                     st.warning("Recommended sample size ≥ 30 for better approximation.")
-
             lower = sample_mean_or_proportion - moe
             upper = sample_mean_or_proportion + moe
             st.success(f"The confidence interval is: [{lower:.4f}, {upper:.4f}]")
@@ -115,4 +113,12 @@ with col2:
     if st.button("Reset"):
         reset_fields()
         st.info("Fields reset! You can now enter new values.")
-        st.rerun()  # <-- esta línea fuerza la actualización complet
+        st.rerun()
+
+# Pie de página
+st.markdown("""
+<hr style="border:1px solid #ddd; margin-top: 40px; margin-bottom:10px">
+<div style="text-align: center; color: grey; font-size: 0.9em">
+    Developed by **Edwin Lee** | 📧 leonellee2016@gmail.com
+</div>
+""", unsafe_allow_html=True)
