@@ -16,8 +16,9 @@ def reset_fields():
         st.session_state.pop(key, None)  # Borra la clave si existe
 
 # Imagen centrada con st.columns
-left, middle, right = st.columns(3, border=True)
-middle.st.image("calculadora.png", width=100)
+left, middle, right = st.columns(3, vertical_alignment="bottom")
+with middle:
+    st.image("calculadora.png", width=100)
 
 # Título
 st.title("Confidence Interval (CI) Calculator")
