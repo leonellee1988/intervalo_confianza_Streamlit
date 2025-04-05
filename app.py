@@ -24,7 +24,7 @@ with middle:
     st.image("image_vector.svg", width=150)
 
 # Título
-st.title("Confidence Interval (CI) Calculator")
+st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Confidence Interval Calculator 🧮</h1>", unsafe_allow_html=True)
 
 # Controles principales
 with st.sidebar:
