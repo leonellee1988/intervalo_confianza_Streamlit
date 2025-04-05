@@ -17,7 +17,7 @@ def reset_fields():
 
 # Imagen centrada con st.columns
 col_img1, col_img2, col_img3 = st.columns([1, 2, 1])
-with col_img2:
+with col_img3:
     st.image("calculadora.png", width=100)
 
 # Título
