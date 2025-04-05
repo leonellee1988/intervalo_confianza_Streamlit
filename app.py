@@ -1,6 +1,9 @@
 import streamlit as st
 from scipy.stats import norm, t
 
+# Configuración general de la App
+st.set_page_config(page_title="Confidence Interval (CI) Calculator", page_icon="🧮", layout="centered", initial_sidebar_state="expanded")
+
 # Valores por defecto
 DEFAULTS = {
     "sample_mean_or_proportion": 0.0,
