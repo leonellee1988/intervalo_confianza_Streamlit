@@ -28,6 +28,7 @@ with st.sidebar:
     calculation_type = st.selectbox(
         "What would you like to calculate?",
         ["", "Mean", "Proportion"],
+        index=["", "Mean", "Proportion"].index(st.session_state.get("calculation_type", "")),
         key="calculation_type"
     )
 
