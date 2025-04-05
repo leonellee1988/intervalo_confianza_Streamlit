@@ -16,8 +16,8 @@ def reset_fields():
         st.session_state.pop(key, None)  # Borra la clave si existe
 
 # Imagen centrada con st.columns
-col_img1, col_img2, col_img3 = st.columns([1, 2, 1])
-with col_img3:
+col_img1, col_img2, col_img3 = st.columns([0, 1, 0])
+with col_img2:
     st.image("calculadora.png", width=100)
 
 # Título
