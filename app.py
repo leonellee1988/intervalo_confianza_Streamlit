@@ -110,3 +110,4 @@ with col2:
     if st.button("Reset"):
         reset_fields()
         st.info("Fields reset! You can now enter new values.")
+        st.rerun()  # <-- esta línea fuerza la actualización complet
