@@ -1,5 +1,6 @@
 import streamlit as st
 from scipy.stats import norm, t
+import pandas as pd
 
 # Configuración general de la App
 st.set_page_config(page_title="Confidence Interval (CI) Calculator", page_icon="🧮", layout="centered", initial_sidebar_state="expanded")
@@ -91,13 +92,21 @@ with col1:
             with st.spinner("Calculating confidence interval..."):
                 import time
                 time.sleep(1)
+            # Crear diccionario con los inputs
+            summary_data = {
+                "Parameter": ["Statistic Type", "Significance Level (α)", 
+                            "Sample Mean/Proportion", "Standard Deviation" if calculation_type == "Mean" else "", 
+                            "Sample Size"],
+                "Value": [calculation_type, significance_level, 
+                        sample_mean_or_proportion, 
+                        st.session_state.standard_deviation if calculation_type == "Mean" else "", 
+                        sample_size]
+            }
+            # Convertir a DataFrame
+            summary_df = pd.DataFrame(summary_data)
+            # Mostrar tabla
             st.subheader("Input Summary:")
-            st.write(f"- **Statistic Type:** {calculation_type}")
-            st.write(f"- **Significance Level (α):** {significance_level}")
-            st.write(f"- **Sample Mean/Proportion:** {sample_mean_or_proportion}")
-            if calculation_type == "Mean":
-                st.write(f"- **Standard Deviation:** {st.session_state.standard_deviation}")
-            st.write(f"- **Sample Size:** {sample_size}")
+            st.table(summary_df)
             # Calcular IC
             if calculation_type == "Mean":
                 if sample_size >= 30:
