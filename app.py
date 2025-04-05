@@ -108,6 +108,15 @@ with col1:
             lower = sample_mean_or_proportion - moe
             upper = sample_mean_or_proportion + moe
             st.success(f"The confidence interval is: [{lower:.4f}, {upper:.4f}]")
+            # Mostrar ecuación
+            with st.expander("Show Formula for CI"):
+                if calculation_type == "Mean":
+                    if sample_size >= 30:
+                        st.latex(r"CI = \bar{x} \pm z \cdot \frac{\sigma}{\sqrt{n}}")
+                    else:
+                        st.latex(r"CI = \bar{x} \pm t \cdot \frac{s}{\sqrt{n}}")
+                elif calculation_type == "Proportion":
+                    st.latex(r"CI = \hat{p} \pm z \cdot \sqrt{\frac{\hat{p}(1 - \hat{p})}{n}}")
 
 with col2:
     if st.button("Reset"):
