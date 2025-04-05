@@ -24,7 +24,7 @@ with middle:
     st.image("image_vector.svg", width=150)
 
 # Título
-st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Confidence Interval Calculator 🧮</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: #FFFFFF;'>Confidence Interval Calculator 🧮</h1>", unsafe_allow_html=True)
 
 # Controles principales
 with st.sidebar:
@@ -88,6 +88,9 @@ with col1:
            not sample_size:
             st.error("Please complete all required information.")
         else:
+            with st.spinner("Calculating confidence interval..."):
+                import time
+                time.sleep(1)
             st.subheader("Input Summary:")
             st.write(f"- **Statistic Type:** {calculation_type}")
             st.write(f"- **Significance Level (α):** {significance_level}")
