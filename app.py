@@ -29,7 +29,7 @@ with middle:
 
 # Título
 st.markdown("""
-<h1 style='text-align: center; color: #FFFFFF;'>Confidence Interval Calculator 🧮</h1>
+<h1 style='text-align: center;'>Confidence Interval Calculator 🧮</h1>
 """, unsafe_allow_html=True)
 
 # Controles principales
